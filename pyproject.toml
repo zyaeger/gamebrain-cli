@@ -1,0 +1,20 @@
+[project]
+name = "gamebrain-cli"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "gamebrain",
+    "requests>=2.32.4",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "pylint>=3.3.8",
+    "pytest>=8.4.1",
+]
+
+[tool.uv.sources]
+gamebrain = { git = "https://github.com/ddsky/gamebrain-api-clients", subdirectory = "python" }
