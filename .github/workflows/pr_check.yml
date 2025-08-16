@@ -21,7 +21,7 @@ jobs:
       
     - name: Run unit tests
       run: |
-        python3 -m unittest src/tests/test_*.py -v -c
+        uv run pytest -v
 
     - name: Check for formatting issues with black
       run: |

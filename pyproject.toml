@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "gamebrain",
+    "dotenv>=0.9.9",
     "requests>=2.32.4",
 ]
 
@@ -15,6 +15,3 @@ dev = [
     "pylint>=3.3.8",
     "pytest>=8.4.1",
 ]
-
-[tool.uv.sources]
-gamebrain = { git = "https://github.com/ddsky/gamebrain-api-clients", subdirectory = "python" }
