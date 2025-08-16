@@ -22,10 +22,11 @@ def main():
         print(e)
 
     resp_json = response.json()
+    headers = response.headers
     pprint(resp_json)
-    pprint(f"Request Token Usage: {response.headers['X-API-Quota-Request']}")
-    pprint(f"Today's Total Token Usage: {response.headers['X-API-Quota-Used']}")
-    pprint(f"Today's Remaining Tokens: {response.headers['X-API-Quota-Left']}")
+    print(f"Request Token Usage: {headers['X-API-Quota-Request']}")
+    print(f"Today's Total Token Usage: {headers['X-API-Quota-Used']}")
+    print(f"Today's Remaining Tokens: {headers['X-API-Quota-Left']}")
     return resp_json.get("name")
 
 

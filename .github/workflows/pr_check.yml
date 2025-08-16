@@ -21,7 +21,7 @@ jobs:
       
     - name: Run unit tests
       run: |
-        uv run pytest
+        uv run pytest -v
 
     - name: Check for formatting issues with black
       run: |
