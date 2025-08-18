@@ -6,6 +6,7 @@ import click
 import requests
 from dotenv import load_dotenv
 
+
 load_dotenv()
 API_KEY = os.environ.get("GAMEBRAIN_API_KEY")
 BASE_URL = "https://api.gamebrain.co/v1"
@@ -18,7 +19,7 @@ def gamebrain():
 
 @gamebrain.command("game-detail")
 @click.argument("game-id")
-def game_detail(game_id: str) -> dict | str:
+def game_detail(game_id: str | int) -> dict | str:
     """
     Takes a Gamebrain game ID and runs a request to GET information on the Game
     """
@@ -43,14 +44,29 @@ def game_detail(game_id: str) -> dict | str:
 
 @gamebrain.command("search")
 @click.argument("query")
-# Add options fo filter and sort
-def search(query: str) -> list:
+@click.option("--platform", "-p", multiple=True)
+@click.option("--review-rating", "-r")
+@click.option("--release", "-d")
+@click.option("--play-mode", "-m", multiple=True)
+@click.option("--age-rating", "-a")
+@click.option("--price", "-c")
+@click.option(
+    "--sort",
+    "-s",
+    nargs=2,
+    type=(
+        click.Choice(["computed_rating", "release_date", "price"]),
+        click.Choice(["asc", "desc"], case_sensitive=False),
+    ),
+)
+def search(query: str, sort: tuple, **filters) -> list:
     """
     Takes a search query and gets the first 10 games returned with their metadata
     """
     url = os.path.join(BASE_URL, "games")
-    # Add pagination and filters
-    click.echo(f"Querying {url} for {query}")
+    click.echo(f"Filters: {filters}")
+    click.echo(f"Sorting: {sort}")
+    click.echo(f"Querying {url} for '{query}'")
     return list[query]
 
 
@@ -78,3 +94,4 @@ def similar(game_id: str) -> list:
 
 if __name__ == "__main__":
     print("Querying Gamebrain API...")
+    gamebrain()
