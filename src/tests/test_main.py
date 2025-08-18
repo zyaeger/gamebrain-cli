@@ -1,8 +1,9 @@
 from unittest.mock import patch
 
 import pytest
+from click.testing import CliRunner
 
-from src import main
+from src.main import gamebrain
 
 
 @pytest.fixture(name="fake_response")
@@ -23,6 +24,8 @@ def _mock_api_response():
 
 # pylint: disable=unused-argument
 def test_dummy(fake_response):
-    dummy = main.main()
+    runner = CliRunner()
+    dummy = runner.invoke(gamebrain, ["game-detail", "1273796"], standalone_mode=False)
     expected = "Kingdom Come: Deliverance II"
-    assert dummy == expected
+    assert dummy.exit_code == 0
+    assert dummy.return_value == expected

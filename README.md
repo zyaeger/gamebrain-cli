@@ -1,11 +1,11 @@
-# Gamebrain CLI
+# GameBrain CLI
 
-Gamebrain CLI is a command-line interface (CLI) wrapper for the Gamebrain API.  
-It allows users to interact with Gamebrain programmatically from the terminal, making it easy to automate tasks, query data, and integrate Gamebrain functionality into scripts and workflows.
+GameBrain CLI is a command-line interface (CLI) wrapper for the GameBrain API.  
+It allows users to interact with GameBrain programmatically from the terminal, making it easy to automate tasks, query data, and integrate GameBrain functionality into scripts and workflows.
 
 ## Features
 
-- Simple commands to access Gamebrain API endpoints
+- Simple commands to access GameBrain API endpoints
 - Authentication and configuration via environment variables
 - Designed for scripting and automation
 
@@ -13,7 +13,13 @@ It allows users to interact with Gamebrain programmatically from the terminal, m
 
 Refer to the CLI help for available commands:
 
-```python src/main.py --help```
+```
+python gamebrain game-detail --help
+python gamebrain search --help
+python gamebrain suggest --help
+python gamebrain similar --help
+```
+
 
 ---
 

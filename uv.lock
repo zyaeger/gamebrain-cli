@@ -117,6 +117,7 @@ name = "gamebrain-cli"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "click" },
     { name = "dotenv" },
     { name = "requests" },
 ]
@@ -130,6 +131,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "click", specifier = ">=8.2.1" },
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "requests", specifier = ">=2.32.4" },
 ]
