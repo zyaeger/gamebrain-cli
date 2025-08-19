@@ -6,9 +6,9 @@ from click.testing import CliRunner
 from src.main import gamebrain
 
 
-@pytest.fixture(name="fake_response")
-def _mock_api_response():
-    with patch("requests.get") as mock_get:
+@pytest.fixture(name="fake_session_get")
+def _fake_session():
+    with patch("requests.Session.request") as mock_get:
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
             "id": 1,
@@ -23,9 +23,9 @@ def _mock_api_response():
 
 
 # pylint: disable=unused-argument
-def test_dummy(fake_response):
+def test_game_detail(fake_session_get):
     runner = CliRunner()
-    dummy = runner.invoke(gamebrain, ["game-detail", "1273796"], standalone_mode=False)
+    actual = runner.invoke(gamebrain, ["game-detail", "1"], standalone_mode=False)
     expected = "Kingdom Come: Deliverance II"
-    assert dummy.exit_code == 0
-    assert dummy.return_value == expected
+    assert actual.exit_code == 0
+    assert actual.return_value == expected
