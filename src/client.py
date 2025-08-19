@@ -35,11 +35,11 @@ class GamebrainClient:
         return urllib.parse.urljoin(self.base_url, endpoint)
 
     def call_api(self, params: dict):
-        
+
         try:
             resp = self.session.request("GET", "", params=params)
         except HTTPError as exc:
             print(exc)
             raise exc
-        
+
         return resp
