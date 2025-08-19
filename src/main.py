@@ -3,12 +3,9 @@ import os
 from pprint import pprint
 
 import click
-import requests
-from dotenv import load_dotenv
 
+from src.client import init_session, GamebrainClient
 
-load_dotenv()
-API_KEY = os.environ.get("GAMEBRAIN_API_KEY")
 BASE_URL = "https://api.gamebrain.co/v1"
 
 
@@ -24,14 +21,11 @@ def game_detail(game_id: str | int) -> dict | str:
     Takes a Gamebrain game ID and runs a request to GET information on the Game
     """
     game_id = int(str(game_id))
-    url = os.path.join(BASE_URL, f"games/{game_id}")
-    headers = {"x-api-key": API_KEY}
+    session = init_session()
+    client = GamebrainClient(BASE_URL, session)
+    url = client.build_url(f"games/{game_id}")
 
-    try:
-        response = requests.get(url, headers=headers, timeout=None)
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        print(e)
+    response = client.call_api(url)
 
     resp_json = response.json()
     headers = response.headers

@@ -1,11 +1,14 @@
+import logging
 import os
 import urllib.parse
 
 from dotenv import load_dotenv
-from requests import Session
+from requests import Response, Session
 from requests.adapters import HTTPAdapter
 from requests.exceptions import HTTPError
 from urllib3.util import Retry
+
+logger = logging.getLogger(__name__)
 
 
 load_dotenv()
@@ -19,27 +22,29 @@ retry_strategy = Retry(
 )
 
 
+def init_session() -> Session:
+    session = Session()
+    session.headers["x-api-key"] = API_KEY
+
+    session.mount("https://", HTTPAdapter(max_retries=retry_strategy))
+    session.mount("http://", HTTPAdapter(max_retries=retry_strategy))
+
+    return session
+
+
 class GamebrainClient:
-    def __init__(self, base_url: str):
+    def __init__(self, base_url: str, session: Session) -> None:
         self.base_url = base_url
-        self.session = Session()
-        self._bootstrap_session()
+        self.session = session
 
-    def _bootstrap_session(self):
-        self.session.headers["x-api-key"] = API_KEY
-
-        self.session.mount("https://", HTTPAdapter(max_retries=retry_strategy))
-        self.session.mount("http://", HTTPAdapter(max_retries=retry_strategy))
-
-    def build_url(self, endpoint: str):
+    def build_url(self, endpoint: str) -> str:
         return urllib.parse.urljoin(self.base_url, endpoint)
 
-    def call_api(self, params: dict):
-
+    def call_api(self, url: str, params: dict = None) -> Response:
         try:
-            resp = self.session.request("GET", "", params=params)
+            resp = self.session.request("GET", url=url, params=params)
         except HTTPError as exc:
-            print(exc)
+            logger.exception(exc)
             raise exc
 
         return resp
