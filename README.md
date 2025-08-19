@@ -14,10 +14,10 @@ It allows users to interact with GameBrain programmatically from the terminal, m
 Refer to the CLI help for available commands:
 
 ```
-python gamebrain game-detail --help
-python gamebrain search --help
-python gamebrain suggest --help
-python gamebrain similar --help
+python -m src.main game-detail --help
+python -m src.main search --help
+python -m src.main suggest --help
+python -m src.main similar --help
 ```
 
 

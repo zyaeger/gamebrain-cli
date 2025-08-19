@@ -14,7 +14,7 @@ BASE_URL = "https://api.gamebrain.co/v1"
 
 @click.group()
 def gamebrain():
-    pass
+    click.echo("Querying Gamebrain API...")
 
 
 @gamebrain.command("game-detail")
@@ -93,5 +93,4 @@ def similar(game_id: str) -> list:
 
 
 if __name__ == "__main__":
-    print("Querying Gamebrain API...")
     gamebrain()
