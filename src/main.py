@@ -1,12 +1,13 @@
-# pylint: disable=fixme
-import os
+import logging
 from pprint import pprint
 
 import click
 
 from src.client import init_session, GamebrainClient
 
-BASE_URL = "https://api.gamebrain.co/v1"
+logger = logging.getLogger(__name__)
+
+BASE_URL = "https://api.gamebrain.co/v1/"
 
 
 @click.group()
@@ -24,15 +25,8 @@ def game_detail(game_id: str | int) -> dict | str:
     session = init_session()
     client = GamebrainClient(BASE_URL, session)
     url = client.build_url(f"games/{game_id}")
-
-    response = client.call_api(url)
-
-    resp_json = response.json()
-    headers = response.headers
+    resp_json = client.call_api(url)
     pprint(resp_json)
-    print(f"Request Token Usage: {headers['X-API-Quota-Request']}")
-    print(f"Today's Total Token Usage: {headers['X-API-Quota-Used']}")
-    print(f"Today's Remaining Tokens: {headers['X-API-Quota-Left']}")
     return resp_json.get("name")
 
 
@@ -45,7 +39,7 @@ def game_detail(game_id: str | int) -> dict | str:
 @click.option("--age-rating", "-a")
 @click.option("--price", "-c")
 @click.option(
-    "--sort",
+    "--sorting",
     "-s",
     nargs=2,
     type=(
@@ -53,15 +47,27 @@ def game_detail(game_id: str | int) -> dict | str:
         click.Choice(["asc", "desc"], case_sensitive=False),
     ),
 )
-def search(query: str, sort: tuple, **filters) -> list:
+def search(query: str, sorting: tuple, **filters) -> dict:
     """
     Takes a search query and gets the first 10 games returned with their metadata
     """
-    url = os.path.join(BASE_URL, "games")
-    click.echo(f"Filters: {filters}")
-    click.echo(f"Sorting: {sort}")
-    click.echo(f"Querying {url} for '{query}'")
-    return list[query]
+    session = init_session()
+    client = GamebrainClient(BASE_URL, session)
+    url = client.build_url("games/")
+    params = {
+        "query": query,
+        "filters": [
+            {"key": f_type, "values": [{"value": val} for val in f_value]}
+            for f_type, f_value in filters.items()
+            if f_value is not None
+        ],
+    }
+    if sorting:
+        sort_dict = {"sort": sorting[0], "sort-order": sorting[1]}
+        params.update(sort_dict)
+    resp_json = client.call_api(url, params=params)
+    pprint(resp_json)
+    return resp_json
 
 
 @gamebrain.command("suggest")
@@ -70,9 +76,14 @@ def suggest(query: str) -> list:
     """
     Takes and incomplete query and returns a list of similar titles
     """
-    url = os.path.join(BASE_URL, "games/suggestions")
-    click.echo(f"Querying {url} for {query}")
-    return [query]
+    session = init_session()
+    client = GamebrainClient(BASE_URL, session)
+    url = client.build_url("games/suggestions")
+    params = {"query": query}
+    resp_json = client.call_api(url, params=params)
+    results = resp_json["results"]
+    pprint(results)
+    return results
 
 
 @gamebrain.command("similar")
@@ -81,9 +92,13 @@ def similar(game_id: str) -> list:
     """
     Takes a game_id and returns 10 games considered similar to the provided ID
     """
-    url = os.path.join(BASE_URL, f"games/{game_id}/similar")
-    click.echo(f"Querying {url} for similar games")
-    return [game_id]
+    session = init_session()
+    client = GamebrainClient(BASE_URL, session)
+    url = client.build_url(f"games/{game_id}/similar")
+    resp_json = client.call_api(url)
+    results = resp_json["results"]
+    pprint(results)
+    return results
 
 
 if __name__ == "__main__":

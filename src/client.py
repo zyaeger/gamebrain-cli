@@ -1,9 +1,10 @@
+# pylint: disable=logging-not-lazy,consider-using-f-string
 import logging
 import os
 import urllib.parse
 
 from dotenv import load_dotenv
-from requests import Response, Session
+from requests import Session
 from requests.adapters import HTTPAdapter
 from requests.exceptions import HTTPError
 from urllib3.util import Retry
@@ -40,11 +41,16 @@ class GamebrainClient:
     def build_url(self, endpoint: str) -> str:
         return urllib.parse.urljoin(self.base_url, endpoint)
 
-    def call_api(self, url: str, params: dict = None) -> Response:
+    def call_api(self, url: str, params: dict = None) -> dict | list:
         try:
             resp = self.session.request("GET", url=url, params=params)
         except HTTPError as exc:
             logger.exception(exc)
             raise exc
 
-        return resp
+        headers = resp.headers
+        logger.info("Request Token Usage: %s" % headers["X-API-Quota-Request"])
+        logger.info("Today's Total Token Usage: %s" % headers["X-API-Quota-Request"])
+        logger.info("Today's Remaining Tokens: %s" % headers["X-API-Quota-Request"])
+
+        return resp.json()
